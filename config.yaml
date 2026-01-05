@@ -1,0 +1,27 @@
+name: Simple pytorch task with checkpoint
+description: learn to run pytorch on Bolt
+tags: ['bolt-samples']
+setup_command: >
+  . /etc/profile.d/conda.sh;
+  conda activate iris &&
+  bash update_env.sh &&
+  bash setup.sh &&
+  source set_conductor_env.sh
+command: >
+  . /etc/profile.d/conda.sh;
+  conda activate iris &&
+# python run.py
+parameters:
+  epochs: 100
+  learning_rate: 0.001
+  momentum: 0.9
+trove:
+  images:
+    # Ensure user has agreed to the terms of use of Trove objects.
+    # See https://bolt.apple.com/docs/data.html#using-turi-trove for more information
+    uri: dataset/CLEVR@1.0.0
+resources:
+  docker_image: docker.apple.com/iris/iris:latest  # check https://bolt.apple.com/images
+  task_type: 2gpu
+  timeout: 14d
+  num_cpus: 8

@@ -175,6 +175,10 @@ def main(script_args, training_args, model_args):
     trainer_cls = Qwen2VLGRPOTrainer if not training_args.use_vllm else Qwen2VLGRPOVLLMTrainerModified
     print("using: ", trainer_cls)
 
+    trainer_args = {}
+    trainer_args["train_last_n_layers"] = model_args.train_last_n_layers
+    trainer_args["train_lm_head"] = model_args.train_lm_head
+
     # Initialize the GRPO trainer
     trainer = trainer_cls(
         model=model_args.model_name_or_path,
@@ -186,6 +190,7 @@ def main(script_args, training_args, model_args):
         attn_implementation=model_args.attn_implementation,
         max_pixels=script_args.max_pixels,
         min_pixels=script_args.min_pixels,
+        **trainer_args,
     )
 
     # Train and push the model to the Hub
@@ -198,6 +203,7 @@ def main(script_args, training_args, model_args):
 
 
 if __name__ == "__main__":
-    parser = TrlParser((GRPOScriptArguments, GRPOConfig, ModelConfig))
+    from open_r1.utils.freezing import DebugModelConfig
+    parser = TrlParser((GRPOScriptArguments, GRPOConfig, DebugModelConfig))
     script_args, training_args, model_args = parser.parse_args_and_config()
     main(script_args, training_args, model_args)

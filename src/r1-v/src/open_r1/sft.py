@@ -42,6 +42,7 @@ import sys
 import datasets
 from dataclasses import dataclass, field
 from typing import Optional
+from open_r1.utils.freezing import DebugModelConfig
 import torch
 import transformers
 from datasets import load_dataset
@@ -247,6 +248,13 @@ def main(script_args, training_args, model_args):
     model = Qwen2VLForConditionalGeneration.from_pretrained(
         model_args.model_name_or_path, **model_kwargs
     )
+    
+    ##################
+    from open_r1.utils.freezing import freeze_model_layers
+    freeze_model_layers(model, train_last_n_layers=model_args.train_last_n_layers,
+                        train_lm_head=model_args.train_lm_head)
+    ##################
+
     ############################
     # Initialize the SFT Trainer
     ############################
@@ -311,6 +319,6 @@ def main(script_args, training_args, model_args):
 
 
 if __name__ == "__main__":
-    parser = TrlParser((ScriptArguments, SFTConfig, ModelConfig))
+    parser = TrlParser((ScriptArguments, SFTConfig, DebugModelConfig))
     script_args, training_args, model_args = parser.parse_args_and_config()
     main(script_args, training_args, model_args)

@@ -7,16 +7,16 @@ import re
 from math_verify import parse, verify
 
 
-MODEL_PATH="<MODEL_PATH>" # qwen2vl model or grpoed model on geoqa train
+MODEL_PATH="/mnt/task_runtime/outs/Qwen2-VL-2B-Instruct" # qwen2vl model or grpoed model on geoqa train
 BSZ=50 # reduce it if GPU OOM
-OUTPUT_PATH="<OUTPUT_LOG>"
+OUTPUT_PATH="/mnt/task_runtime/outs/test_qwen2vl_geoqa_log.txt"
 PROMPT_PATH="./prompts/geoqa_test_prompts.jsonl"
 
 #We recommend enabling flash_attention_2 for better acceleration and memory saving, especially in multi-image and video scenarios.
 model = Qwen2VLForConditionalGeneration.from_pretrained(
     MODEL_PATH,
-    torch_dtype=torch.bfloat16,
-    attn_implementation="flash_attention_2",
+    torch_dtype=torch.float16,  # torch.bfloat16,
+    attn_implementation="sdpa",  # "flash_attention_2",
     device_map="auto",
 )
 

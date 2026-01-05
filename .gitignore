@@ -1,3 +1,7 @@
 output/
 hostfiles/
 internal_scripts/
+ckpts
+dses
+outs
+wandb/

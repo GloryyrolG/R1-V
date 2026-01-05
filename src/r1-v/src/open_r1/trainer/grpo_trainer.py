@@ -17,6 +17,7 @@ import textwrap
 from collections import defaultdict
 from typing import Any, Callable, Optional, Union
 
+from open_r1.utils.freezing import freeze_model_layers
 import torch
 import torch.utils.data
 import transformers
@@ -159,6 +160,8 @@ class Qwen2VLGRPOTrainer(Trainer):
         max_pixels: Optional[int] = 12845056,
         min_pixels: Optional[int] = 3136,
         attn_implementation: str = "flash_attention_2",
+        train_last_n_layers: Optional[int] = 0,
+        train_lm_head: Optional[bool] = True,
     ):
         # Args
         if args is None:
@@ -203,6 +206,8 @@ class Qwen2VLGRPOTrainer(Trainer):
                     "You passed `model_init_kwargs` to the `GRPOConfig`, but your model is already instantiated. "
                     "This argument can only be used when the `model` argument is a string."
                 )
+
+        freeze_model_layers(model, train_last_n_layers=train_last_n_layers, train_lm_head=train_lm_head)
 
         if peft_config is not None:
             model = get_peft_model(model, peft_config)
